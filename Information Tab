@@ -1,0 +1,71 @@
+## WHAT IS IT?
+
+This is a Cell Cycle Agent-Based Model (CCABM) of the fission yeast. The current model was created to simulate the 
+sequence of protein events of the fission yeast cell cycle while measuring the time and percentage of duration of 
+each of the four cell cycle phases (G1, S, G2 and M) as part of the research journal titled “An agent-based model 
+of the fission yeast cell cycle”
+
+## HOW IT WORKS
+
+The CCABM is based on the protein regulatory network of the cell cycle from 
+[Davidich MI, Bornholdt S (2008) Boolean Network Model Predicts Cell Cycle Sequence of Fission Yeast.]
+(http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0001672). Each protein is represented by an 
+agent and have activation, inhibition and self-degradation process. The proteins have a binary property called 
+activity that represent if they are active or not, the combination of values of activity of each protein determines 
+the time step in the cell cycle.
+
+## HOW TO USE IT
+
+The selectors for the initial conditions of the proteins are located in top of the world, biological conditions 
+are the following: “Start” (1), SK (0), Cdc2/Cdc13 (0), Ste9 (1), Rum (1), Slp1 (0), Cdc2/Cdc13* (0), Wee1/Mik1 (1),
+Cdc25 (0), and PP (0). 
+
+Left of the world there is a selector to choose if links are visible or not. The setup button is to set the model
+with the initial states selected in the selector for initial conditions. The bio button is to set the initial states
+the same as the initial biological conditions ignoring the values set in the selector for initial states.  The go
+once button is used to run one time-step and the go button is used to run the model entirely until the simulation is finished. 
+
+Right of the world are three rows of monitors, the first row shows the current phase were the cell cycle is, the 
+second row shows the time in ticks for each phase and the third row shows the percentage of duration for each phase as well.
+
+Under the world are monitors that show the current value of activity for each protein.
+
+## BEHAVIOR SPACE 
+The CCABM is intended to be ran under biological conditions. In addition, to perform the different experiments 
+to validate the model the behavior space tool was used, performing three different experiments.
+
+Biological conditions: The model is run 100 times under biological conditions, in order to eliminate inherent variability.
+
+All possible initial states: Run the model with the 1024 combinations of initial conditions to check the times that
+the model reached the desired final state.
+
+All possible initial states but only when Start is active: The same as the above when only is Start is active, 
+resulting in 512 combinations, again to check the times that the model reached the desired final state.
+
+## EXTENDING THE MODEL
+
+This model can be complemented to generate a model of cancer drug studies performed in the fission yeast, first by changing the behavior of the cell cycle to match one type of cancer and by adding a type of agent that represents the drug to see when and if the drug stops the cell cycle (the cell die).
+
+## CREDITS AND REFERENCES
+
+MIT License
+
+Copyright (c) 2018 Carlos Castro
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
