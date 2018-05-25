@@ -1,0 +1,697 @@
+globals [phase start-time G1-time S-time G2-time M-time]
+
+turtles-own [ active deg]
+
+breed [ start a-start ]
+breed [ SK a-SK ]
+breed [ Cdc2/Cdc13 a-aCdc2/Cdc13 ]
+breed [ Ste9 a-Ste9 ]
+breed [ Rum1 a-Rum1 ]
+breed [ Slp1 a-Slp1 ]
+breed [ Cdc2/Cdc13* a-aCdc2/Cdc13* ]
+breed [ Wee1Mik1 a-Wee1Mik1 ]
+breed [ Cdc25 a-Cdc25 ]
+breed [ PP a-PP ]
+
+directed-link-breed [ green-links green-link ]
+directed-link-breed [ red-links red-link ]
+
+to setup
+  ca
+  ask patches [ set pcolor blue + 2 ]
+
+  ;; create proteins
+  create-start 1 [
+    set color red
+    set shape "circle"
+    setxy random-xcor random-ycor
+    set active start-active
+    set label "start"
+  ]
+
+  create-SK 1 [
+    set color red
+    set shape "circle"
+    setxy random-xcor random-ycor
+    set active SK-active
+    set label "SK"
+  ]
+
+  create-Cdc2/Cdc13 1 [
+    set color red
+    set shape "circle"
+    setxy random-xcor random-ycor
+    set active Cdc2/Cdc13-active
+    set label "Cdc2/Cdc13"
+  ]
+
+  create-Ste9 1 [
+    set color red
+    set shape "circle"
+    setxy random-xcor random-ycor
+    set active Ste9-active
+    set label "Ste9"
+  ]
+
+  create-Rum1 1 [
+    set color red
+    set shape "circle"
+    setxy random-xcor random-ycor
+    set active Rum1-active
+    set label "Rum1"
+  ]
+
+  create-Slp1 1 [
+    set color red
+    set shape "circle"
+    setxy random-xcor random-ycor
+    set active Slp1-active
+    set label "Slp1"
+  ]
+
+  create-Cdc2/Cdc13* 1 [
+    set color red
+    set shape "circle"
+    setxy random-xcor random-ycor
+    set active Cdc2/Cdc13*-active
+    set label "Cdc2/Cdc13*"
+  ]
+
+  create-Wee1Mik1 1 [
+    set color red
+    set shape "circle"
+    setxy random-xcor random-ycor
+    set active Wee1Mik1-active
+    set label "Wee1 Mik1"
+  ]
+
+  create-Cdc25 1 [
+    set color red
+    set shape "circle"
+    setxy random-xcor random-ycor
+    set active Cdc25-active
+    set label "Cdc25"
+  ]
+
+  create-PP 1 [
+    set color red
+    set shape "circle"
+    setxy random-xcor random-ycor
+    set active PP-active
+    set label "PP"
+  ]
+
+  ;; create activating links
+
+  ask start [
+    create-green-links-to SK
+  ]
+
+  ask Cdc2/Cdc13 [
+    create-green-links-to Cdc25
+  ]
+
+  ask PP [
+    create-green-links-to Ste9
+    create-green-links-to Rum1
+    create-green-links-to Wee1Mik1
+  ]
+
+  ask Cdc25 [
+    create-green-links-to Cdc2/Cdc13*
+  ]
+
+  ask Slp1 [
+    create-green-links-to PP
+  ]
+
+  ask Cdc2/Cdc13* [
+    create-green-links-to Slp1
+  ]
+
+ ask green-links [
+   set color green - 1
+   set thickness 0.2
+ ]
+
+  ;; create inhibitor links
+
+  ask SK [
+     create-red-links-to Ste9
+     create-red-links-to Rum1
+  ]
+
+  ask Ste9 [
+     create-red-links-to Cdc2/Cdc13
+     create-red-links-to Cdc2/Cdc13*
+  ]
+
+  ask Cdc2/Cdc13 [
+     create-red-links-to Ste9
+     create-red-links-to Rum1
+     create-red-links-to Wee1Mik1
+  ]
+
+  ask Rum1 [
+     create-red-links-to Cdc2/Cdc13
+     create-red-links-to Cdc2/Cdc13*
+  ]
+
+  ask PP [
+    create-red-links-to Cdc25
+  ]
+
+  ask Slp1 [
+    create-red-links-to Cdc2/Cdc13
+    create-red-links-to Cdc2/Cdc13*
+  ]
+
+  ask Wee1Mik1 [
+    create-red-links-to Cdc2/Cdc13*
+  ]
+
+  ask Cdc2/Cdc13* [
+     create-red-links-to Ste9
+     create-red-links-to Rum1
+  ]
+
+  ask red-links [
+   set color red + 1
+   set thickness 0.2
+   ;;set shape "inhi"
+  ]
+
+  ask links
+   [ ifelse show-links = TRUE
+       [ set hidden? FALSE ]
+       [ set hidden? TRUE  ]
+   ]
+
+  reset-ticks
+end
+
+
+to go
+
+    if item 0 [active] of       Start = 0	
+  and item 0 [active] of          SK = 0
+  and item 0 [active] of  Cdc2/Cdc13 = 0
+  and item 0 [active] of        Ste9 = 1
+  and item 0 [active] of        Rum1 = 1	
+  and item 0 [active] of        Slp1 = 0
+  and item 0 [active] of Cdc2/Cdc13* = 0
+  and item 0 [active] of	  Wee1Mik1 = 1	
+  and item 0 [active] of       Cdc25 = 0	
+  and item 0 [active] of          PP = 0 [
+    set phase "G1(stationary)"
+    stop
+  ]
+
+   if item 0 [active] of       Start = 0	
+  and item 0 [active] of          SK = 0
+  and item 0 [active] of  Cdc2/Cdc13 = 0
+  and item 0 [active] of        Ste9 = 0
+  and item 0 [active] of        Rum1 = 0	
+  and item 0 [active] of        Slp1 = 0
+  and item 0 [active] of Cdc2/Cdc13* = 0
+  and item 0 [active] of	  Wee1Mik1 = 0	
+  and item 0 [active] of       Cdc25 = 1	
+  and item 0 [active] of          PP = 1 [
+    set phase "Limit"
+    stop
+  ]
+
+   if item 0 [active] of       Start = 0	
+  and item 0 [active] of          SK = 0
+  and item 0 [active] of  Cdc2/Cdc13 = 0
+  and item 0 [active] of        Ste9 = 0
+  and item 0 [active] of        Rum1 = 1	
+  and item 0 [active] of        Slp1 = 0
+  and item 0 [active] of Cdc2/Cdc13* = 0
+  and item 0 [active] of	  Wee1Mik1 = 1	
+  and item 0 [active] of       Cdc25 = 0	
+  and item 0 [active] of          PP = 0 [
+    set phase "Fixed"
+    stop
+  ]
+
+   if item 0 [active] of       Start = 0	
+  and item 0 [active] of          SK = 0
+  and item 0 [active] of  Cdc2/Cdc13 = 0
+  and item 0 [active] of        Ste9 = 1
+  and item 0 [active] of        Rum1 = 0	
+  and item 0 [active] of        Slp1 = 0
+  and item 0 [active] of Cdc2/Cdc13* = 0
+  and item 0 [active] of	  Wee1Mik1 = 1	
+  and item 0 [active] of       Cdc25 = 0	
+  and item 0 [active] of          PP = 0 [
+    set phase "Fixed"
+    stop
+  ]
+
+   if item 0 [active] of       Start = 0	
+  and item 0 [active] of          SK = 0
+  and item 0 [active] of  Cdc2/Cdc13 = 0
+  and item 0 [active] of        Ste9 = 1
+  and item 0 [active] of        Rum1 = 0	
+  and item 0 [active] of        Slp1 = 0
+  and item 0 [active] of Cdc2/Cdc13* = 0
+  and item 0 [active] of	  Wee1Mik1 = 0	
+  and item 0 [active] of       Cdc25 = 0	
+  and item 0 [active] of          PP = 0 [
+    set phase "Fixed"
+    stop
+  ]
+
+   if item 0 [active] of       Start = 0	
+  and item 0 [active] of          SK = 0
+  and item 0 [active] of  Cdc2/Cdc13 = 0
+  and item 0 [active] of        Ste9 = 1
+  and item 0 [active] of        Rum1 = 0	
+  and item 0 [active] of        Slp1 = 0
+  and item 0 [active] of Cdc2/Cdc13* = 0
+  and item 0 [active] of	  Wee1Mik1 = 0	
+  and item 0 [active] of       Cdc25 = 1	
+  and item 0 [active] of          PP = 0 [
+    set phase "Fixed"
+    stop
+  ]
+
+   if item 0 [active] of       Start = 0	
+  and item 0 [active] of          SK = 0
+  and item 0 [active] of  Cdc2/Cdc13 = 0
+  and item 0 [active] of        Ste9 = 1
+  and item 0 [active] of        Rum1 = 0	
+  and item 0 [active] of        Slp1 = 0
+  and item 0 [active] of Cdc2/Cdc13* = 0
+  and item 0 [active] of	  Wee1Mik1 = 1	
+  and item 0 [active] of       Cdc25 = 1	
+  and item 0 [active] of          PP = 0 [
+    set phase "Fixed"
+    stop
+  ]
+
+   if item 0 [active] of       Start = 0	
+  and item 0 [active] of          SK = 0
+  and item 0 [active] of  Cdc2/Cdc13 = 0
+  and item 0 [active] of        Ste9 = 0
+  and item 0 [active] of        Rum1 = 1	
+  and item 0 [active] of        Slp1 = 0
+  and item 0 [active] of Cdc2/Cdc13* = 0
+  and item 0 [active] of	  Wee1Mik1 = 0	
+  and item 0 [active] of       Cdc25 = 0	
+  and item 0 [active] of          PP = 0 [
+    set phase "Fixed"
+    stop
+  ]
+
+   if item 0 [active] of       Start = 0	
+  and item 0 [active] of          SK = 0
+  and item 0 [active] of  Cdc2/Cdc13 = 0
+  and item 0 [active] of        Ste9 = 0
+  and item 0 [active] of        Rum1 = 1	
+  and item 0 [active] of        Slp1 = 0
+  and item 0 [active] of Cdc2/Cdc13* = 0
+  and item 0 [active] of	  Wee1Mik1 = 0	
+  and item 0 [active] of       Cdc25 = 1	
+  and item 0 [active] of          PP = 0 [
+    set phase "Fixed"
+    stop
+  ]
+
+   if item 0 [active] of       Start = 0	
+  and item 0 [active] of          SK = 0
+  and item 0 [active] of  Cdc2/Cdc13 = 0
+  and item 0 [active] of        Ste9 = 0
+  and item 0 [active] of        Rum1 = 1	
+  and item 0 [active] of        Slp1 = 0
+  and item 0 [active] of Cdc2/Cdc13* = 0
+  and item 0 [active] of	  Wee1Mik1 = 1	
+  and item 0 [active] of       Cdc25 = 1	
+  and item 0 [active] of          PP = 0 [
+    set phase "Fixed"
+    stop
+  ]
+
+   if item 0 [active] of       Start = 0	
+  and item 0 [active] of          SK = 0
+  and item 0 [active] of  Cdc2/Cdc13 = 0
+  and item 0 [active] of        Ste9 = 1
+  and item 0 [active] of        Rum1 = 1	
+  and item 0 [active] of        Slp1 = 0
+  and item 0 [active] of Cdc2/Cdc13* = 0
+  and item 0 [active] of	  Wee1Mik1 = 0	
+  and item 0 [active] of       Cdc25 = 0	
+  and item 0 [active] of          PP = 0 [
+    set phase "Fixed"
+    stop
+  ]
+
+   if item 0 [active] of       Start = 0	
+  and item 0 [active] of          SK = 0
+  and item 0 [active] of  Cdc2/Cdc13 = 0
+  and item 0 [active] of        Ste9 = 1
+  and item 0 [active] of        Rum1 = 1	
+  and item 0 [active] of        Slp1 = 0
+  and item 0 [active] of Cdc2/Cdc13* = 0
+  and item 0 [active] of	  Wee1Mik1 = 0	
+  and item 0 [active] of       Cdc25 = 1	
+  and item 0 [active] of          PP = 0 [
+    set phase "Fixed"
+    stop
+  ]
+
+   if item 0 [active] of       Start = 0	
+  and item 0 [active] of          SK = 0
+  and item 0 [active] of  Cdc2/Cdc13 = 0
+  and item 0 [active] of        Ste9 = 1
+  and item 0 [active] of        Rum1 = 1	
+  and item 0 [active] of        Slp1 = 0
+  and item 0 [active] of Cdc2/Cdc13* = 0
+  and item 0 [active] of	  Wee1Mik1 = 1	
+  and item 0 [active] of       Cdc25 = 1	
+  and item 0 [active] of          PP = 0 [
+    set phase "Fixed"
+    stop
+  ]
+
+   if item 0 [active] of       Start = 0	
+  and item 0 [active] of          SK = 0
+  and item 0 [active] of  Cdc2/Cdc13 = 0
+  and item 0 [active] of        Ste9 = 0
+  and item 0 [active] of        Rum1 = 0	
+  and item 0 [active] of        Slp1 = 0
+  and item 0 [active] of Cdc2/Cdc13* = 0
+  and item 0 [active] of	  Wee1Mik1 = 0	
+  and item 0 [active] of       Cdc25 = 0	
+  and item 0 [active] of          PP = 0 [
+    set phase "Fixed"
+    stop
+  ]
+
+
+  c-phase
+
+  move
+  activate
+  inhibit
+  degradation
+
+  ask links
+  [ ifelse show-links = TRUE
+      [ set hidden? FALSE ]
+      [ set hidden? TRUE  ]
+  ]
+
+  tick
+end
+
+to move
+  ask turtles [
+    right random 360
+    fd 1
+  ]
+
+end
+
+to degradation
+
+    ;; behavior of Cdc complex
+  if item 0 [active] of Ste9 = 0 and item 0 [active] of Rum1 = 0 and item 0 [active] of Slp1 = 0 and random-float 1 < 0.0005 [
+     ask Cdc2/Cdc13 [ set active 1 ]
+  ]
+
+  if item 0 [active] of SK = 1 [
+   ask start [ set active 0 ]
+  ]
+
+  ;; self-degradation of SK
+  if item 0 [active] of Ste9 = 0 and item 0 [active] of Rum1 = 0 [
+   ask SK [ set active 0 ]
+  ]
+
+  if item 0 [active] of Cdc2/Cdc13 = 0 and item 0 [active] of Cdc2/Cdc13* = 0 and item 0 [active] of PP = 1 [
+   ask Slp1 [ set active 0 ]
+  ]
+
+  if item 0 [active] of Ste9 = 1 and item 0 [active] of Rum1 = 1 and item 0 [active] of Wee1Mik1 = 1 and item 0 [active] of Cdc25 = 0 [
+   ask PP [ set active 0 ]
+  ]
+
+   if item 0 [active] of PP = 1 [
+   ask Cdc25 [ set active 0 ]
+  ]
+
+end
+
+;; function for the activation of proteins by its activator
+to activate
+
+  ask start with [ active = 1 ] [
+    let react one-of SK-here
+      if react != nobody [
+       ask react [ set active 1
+      ]
+      set active 0
+    ]
+  ]
+
+  ask Cdc2/Cdc13 with [ active = 1 ] [
+    let react one-of Cdc25-here
+      if react != nobody [
+       ask react [
+         set active 1
+      ]
+    ]
+  ]
+
+  ask Cdc25 with [ active = 1 ] [
+    let react one-of Cdc2/Cdc13*-here
+      if react != nobody [
+       ask react [
+         set active 1
+      ]
+    ]
+  ]
+
+  ask Cdc2/Cdc13* with [ active = 1 ] [
+    let react one-of Slp1-here
+      if react != nobody [
+       ask react [
+         set active 1
+      ]
+    ]
+  ]
+
+  ask Slp1 with [ active = 1 ] [
+    let react one-of PP-here
+      if react != nobody [
+       ask react [
+         set active 1
+      ]
+    ]
+  ]
+
+  ask PP with [ active = 1 ] [
+    let react one-of Ste9-here
+      if react != nobody [
+       ask react [
+         set active 1
+      ]
+    ]
+  ]
+
+  ask PP with [ active = 1 ] [
+    let react one-of Rum1-here
+      if react != nobody [
+       ask react [
+         set active 1
+      ]
+    ]
+  ]
+
+  ask PP with [ active = 1 ] [
+    let react one-of Wee1Mik1-here
+      if react != nobody [
+       ask react [
+         set active 1
+      ]
+    ]
+  ]
+
+end
+
+;; function for the inhibition of proteins by its inhibitor
+to inhibit
+
+  ask SK with [ active = 1 ] [
+    let react one-of Ste9-here
+      if react != nobody [
+       ask react [ set active 0
+      ]
+    ]
+  ]
+
+  ask SK with [ active = 1 ] [
+    let react one-of Rum1-here
+      if react != nobody [
+       ask react [ set active 0
+      ]
+    ]
+  ]
+
+  ask Ste9 with [ active = 1 ] [
+    let react one-of Cdc2/Cdc13-here
+      if react != nobody [
+       ask react [ set active 0
+      ]
+    ]
+  ]
+
+  ask Ste9 with [ active = 1 ] [
+    let react one-of Cdc2/Cdc13*-here
+      if react != nobody [
+       ask react [ set active 0
+      ]
+    ]
+  ]
+
+  ask Cdc2/Cdc13 with [ active = 1 ] [
+    let react one-of Ste9-here
+      if react != nobody [
+       ask react [ set active 0
+      ]
+    ]
+  ]
+
+  ask Cdc2/Cdc13 with [ active = 1 ] [
+    let react one-of Rum1-here
+      if react != nobody [
+       ask react [ set active 0
+      ]
+    ]
+  ]
+
+  ask Cdc2/Cdc13 with [ active = 1 ] [
+    let react one-of Wee1Mik1-here
+      if react != nobody [
+       ask react [ set active 0
+      ]
+    ]
+  ]
+
+  ask Rum1 with [ active = 1 ] [
+    let react one-of Cdc2/Cdc13-here
+      if react != nobody [
+       ask react [ set active 0
+      ]
+    ]
+  ]
+
+  ask Rum1 with [ active = 1 ] [
+    let react one-of Cdc2/Cdc13*-here
+      if react != nobody [
+       ask react [ set active 0
+      ]
+    ]
+  ]
+
+  ask PP with [ active = 1 ] [
+    let react one-of Cdc25-here
+      if react != nobody [
+       ask react [ set active 0
+      ]
+    ]
+  ]
+
+  ask Slp1 with [ active = 1 ] [
+    let react one-of Cdc2/Cdc13-here
+      if react != nobody [
+       ask react [ set active 0
+      ]
+    ]
+  ]
+
+  ask Slp1 with [ active = 1 ] [
+    let react one-of Cdc2/Cdc13*-here
+      if react != nobody [
+       ask react [ set active 0
+      ]
+    ]
+  ]
+
+  ask Wee1Mik1 with [ active = 1 ] [
+    let react one-of Cdc2/Cdc13*-here
+      if react != nobody [
+       ask react [ set active 0
+      ]
+    ]
+  ]
+
+  ask Cdc2/Cdc13* with [ active = 1 ] [
+    let react one-of Ste9-here
+      if react != nobody [
+       ask react [ set active 0
+      ]
+    ]
+  ]
+
+  ask Cdc2/Cdc13* with [ active = 1 ] [
+    let react one-of Rum1-here
+      if react != nobody [
+       ask react [ set active 0
+      ]
+    ]
+  ]
+
+end
+
+to c-phase
+  ;; checks for Start phase
+   if item 0 [active] of       Start = 1	
+  and item 0 [active] of          SK = 0
+  and item 0 [active] of  Cdc2/Cdc13 = 0
+  and item 0 [active] of        Ste9 = 1
+  and item 0 [active] of        Rum1 = 1	
+  and item 0 [active] of        Slp1 = 0
+  and item 0 [active] of Cdc2/Cdc13* = 0
+  and item 0 [active] of	  Wee1Mik1 = 1	
+  and item 0 [active] of       Cdc25 = 0	
+  and item 0 [active] of          PP = 0 [
+    set phase "Start"
+  ]
+
+  ;; checks for G1 phase
+   if item 0 [active] of SK = 1 [
+    set phase "G1"
+    set G1-time ticks - start-time
+  ]
+
+    ;; checks for S phase
+   if item 0 [active] of       Start = 0	
+  and item 0 [active] of          SK = 0
+  and item 0 [active] of  Cdc2/Cdc13 = 0
+  and item 0 [active] of        Ste9 = 0
+  and item 0 [active] of        Rum1 = 0	
+  and item 0 [active] of        Slp1 = 0
+  and item 0 [active] of Cdc2/Cdc13* = 0
+  and item 0 [active] of	  Wee1Mik1 = 1	
+  and item 0 [active] of       Cdc25 = 0	
+  and item 0 [active] of          PP = 0 [
+    set phase "S"
+    set S-time ticks - G1-time - start-time
+  ]
+
+  ;; checks for G2 transition
+   if item 0 [active] of Cdc2/Cdc13 = 1 [
+    set phase "G2"
+    set G2-time ticks - S-time - G1-time - start-time
+  ]
+
+  ;; checks for M phase
+
+     if item 0 [active] of PP = 1 and item 0 [active] of Cdc2/Cdc13 = 0 [
+    set phase "M"
+    set M-time ticks - G2-time - S-time - G1-time - start-time
+  ]
+end
